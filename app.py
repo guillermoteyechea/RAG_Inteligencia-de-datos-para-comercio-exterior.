@@ -4,7 +4,7 @@ from rag import responder
 st.set_page_config(page_title="Motor de Inteligencia Comercial", layout="centered")
 
 st.image("Images/amaras.jpeg", use_container_width=True)
-st.title("Motor de Inteligencia Comercial for Gay Boys")
+st.title("Motor de Inteligencia Comercial para evaluar exportaciones de México a España")
 
 pregunta = st.text_input("Escribe un producto:")
 
