@@ -3,7 +3,7 @@ from rag import responder
 
 st.set_page_config(page_title="Motor de Inteligencia Comercial", layout="centered")
 
-st.image("Images/amaras.jpeg", use_container_width=True)
+st.image("Images/ramo.jpeg", use_container_width=True)
 st.title("Motor de Inteligencia Comercial para evaluar exportaciones de México a España")
 
 pregunta = st.text_input("Escribe un producto:")
@@ -12,17 +12,17 @@ if st.button("Consultar") and pregunta:
     with st.spinner("Procesando consulta..."):
         r = responder(pregunta)
 
-if nombre:
-    letra = nombre[0]
+    nombre = r.get("consulta_interpretada", "").lower()
 
-    if letra in ["a", "b", "c"]:
-        st.image("Images/Palonegro.jpeg", use_container_width=True)
+    if nombre:
+        letra = nombre[0]
 
-    elif letra in ["d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]:
-        st.image("Images/canasta.jpeg", use_container_width=True)
-
-    else:
-        st.image("Images/nuez.jpeg", use_container_width=True)
+        if letra in ["a", "b", "c"]:
+            st.image(str(IMAGES_DIR / "Palonegro.jpeg"), width="stretch")
+        elif letra in ["d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]:
+            st.image(str(IMAGES_DIR / "canasta.jpeg"), width="stretch")
+        else:
+            st.image(str(IMAGES_DIR / "nuez.jpeg"), width="stretch")
     
     if not r["ok"]:
         st.error(r["mensaje"])
