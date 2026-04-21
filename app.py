@@ -3,7 +3,8 @@ from rag import responder
 
 st.set_page_config(page_title="Motor de Inteligencia Comercial", layout="centered")
 
-st.title("Motor de Inteligencia Comercial for gay boys")
+st.image("Images/amaras.jpeg", use_container_width=True)
+st.title("Motor de Inteligencia Comercial for Gay Boys")
 
 pregunta = st.text_input("Escribe un producto:")
 
@@ -11,6 +12,18 @@ if st.button("Consultar") and pregunta:
     with st.spinner("Procesando consulta..."):
         r = responder(pregunta)
 
+if nombre:
+    letra = nombre[0]
+
+    if letra in ["a", "b", "c"]:
+        st.image("Images/Palonegro.jpeg", use_container_width=True)
+
+    elif letra in ["d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]:
+        st.image("Images/canasta.jpeg", use_container_width=True)
+
+    else:
+        st.image("Images/nuez.jpeg", use_container_width=True)
+    
     if not r["ok"]:
         st.error(r["mensaje"])
     else:
