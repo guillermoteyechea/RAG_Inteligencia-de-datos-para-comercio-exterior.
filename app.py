@@ -18,11 +18,11 @@ if st.button("Consultar") and pregunta:
         letra = nombre[0]
 
         if letra in ["a", "b", "c"]:
-            st.image(str(IMAGES_DIR / "Palonegro.jpeg"), width="stretch")
+            st.image(str("Images/Palonegro.jpeg"), width="stretch")
         elif letra in ["d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]:
-            st.image(str(IMAGES_DIR / "canasta.jpeg"), width="stretch")
+            st.image(str("Images/canasta.jpeg"), width="stretch")
         else:
-            st.image(str(IMAGES_DIR / "nuez.jpeg"), width="stretch")
+            st.image(str("Images/nuez.jpeg"), width="stretch")
     
     if not r["ok"]:
         st.error(r["mensaje"])
