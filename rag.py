@@ -14,7 +14,7 @@ from openai import OpenAI
 # Rutas base
 # =========================
 BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
+DATA_DIR = BASE_DIR / "Data"
 CACHE_DIR = BASE_DIR / "cache"
 
 TAX_PATH = DATA_DIR / "Tax.csv"
