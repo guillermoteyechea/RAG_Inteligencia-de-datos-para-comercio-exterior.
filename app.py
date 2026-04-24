@@ -3,14 +3,15 @@ from rag import responder
 
 st.set_page_config(page_title="Motor de Inteligencia Comercial", layout="centered")
 
+st.title("Motor de Inteligencia Comercial")
 st.image("Images/ramo.jpeg", width="stretch")
-st.title("Motor de Inteligencia Comercial para evaluar exportaciones de México a España")
+st.title("Enfoque para evaluar exportaciones de México a España con Norteamerica como referencia")
 
 with st.expander("ℹ️ ¿Cómo interpretar las métricas?"):
     st.markdown("""
-    **Norteamérica:** valor exportado del producto hacia la región de Norteamérica, de acuerdo con la base de exportaciones utilizada.
+    **Norteamérica:** valor exportado del producto de México hacia la región de Norteamérica, de acuerdo con la base de exportaciones utilizada.
 
-    **España:** valor exportado del producto hacia España.
+    **España:** valor exportado del producto de México hacia España.
 
     **Índice actual:** compara el nivel relativo de penetración del producto en España frente a Norteamérica.  
     - Si es menor a 1, España muestra menor penetración relativa.  
@@ -20,7 +21,7 @@ with st.expander("ℹ️ ¿Cómo interpretar las métricas?"):
     **Índice oportunidad:** estima el margen potencial de crecimiento.  
     - Valores positivos sugieren oportunidad de crecimiento.  
     - Valores cercanos a cero indican poca diferencia relativa.  
-    - Valores negativos sugieren que el producto ya tiene alta penetración en España.
+    - Valores negativos sugieren que el producto ya tiene alta penetración en España, incluso mayor que Norteamérica.
 
     **Valor potencial:** estimación del tamaño que podría alcanzar el mercado español si tuviera un comportamiento similar al mercado de referencia.
 
