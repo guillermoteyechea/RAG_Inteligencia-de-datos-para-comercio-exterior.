@@ -138,24 +138,31 @@ if st.button("Consultar") and pregunta:
            st.metric("Población de referencia España", f"{79_581:,.0f}")
            st.metric("Gasto por persona España", f"${m['gasto_espana']:,.2f}")
 
-        st.subheader("📈 Potencial")
+st.subheader("📈 Potencial")
 
-   
-        crecimiento = float(m["crecimiento_estimado"])
+crecimiento = float(m["crecimiento_estimado"])
 
-        st.metric("Índice actual", f"{m['indice_actual']:.2f}")
-        st.metric("Índice oportunidad", f"{m['indice_oportunidad']:.2f}")
-        st.metric("Valor potencial", f"${m['valor_potencial']:,.0f}")
+col1, col2 = st.columns(2)
 
-        if abs(crecimiento) < 1e-6:
-            st.metric("Crecimiento estimado", "$0")
-            st.info("No contamos con datos suficientes para poder estimar un valor que le pueda ser de utilidad.")
-        elif crecimiento < 0:
-            st.metric("Crecimiento estimado", f"${crecimiento:,.0f}")
-            st.info("El producto presenta una penetración relevante en España, lo que sugiere un mercado ya bien aceptado y con un nivel de madurez considerable.")
-        else:
-            st.metric("Crecimiento estimado", f"${crecimiento:,.0f}")
-            st.success("Se observa una oportunidad de crecimiento estimado en el mercado español.")
+with col1:
+    st.metric("Índice actual", f"{m['indice_actual']:.2f}")
+    st.metric("Índice oportunidad", f"{m['indice_oportunidad']:.2f}")
+
+with col2:
+    st.metric("Valor potencial", f"${m['valor_potencial']:,.0f}")
+    
+    if abs(crecimiento) < 1e-6:
+        st.metric("Crecimiento estimado", "$0")
+    else:
+        st.metric("Crecimiento estimado", f"${crecimiento:,.0f}")
+
+# Mensaje interpretativo (abajo, a lo ancho)
+if abs(crecimiento) < 1e-6:
+    st.info("No contamos con datos suficientes para poder estimar un valor que le pueda ser de utilidad.")
+elif crecimiento < 0:
+    st.info("El producto presenta una penetración relevante en España, por lo que se trata de un mercado ya bien aceptado y con un nivel de madurez considerable.")
+else:
+    st.success("Se observa una oportunidad de crecimiento estimado en el mercado español.")       
 
         st.subheader("📑 Resultados encontrados")
 
