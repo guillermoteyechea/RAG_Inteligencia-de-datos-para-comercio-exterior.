@@ -1,6 +1,69 @@
 import streamlit as st
 from rag import responder
 
+IMAGENES_POR_CODIGO = {
+    "0701": "Images/papa.jpeg",
+    "0702": "Images/tomate.jpeg",
+    "0703": "Images/ajo.jpeg",
+    "0704": "Images/canasta.jpeg",
+    "0705": "Images/canasta.jpeg",
+    "0706": "Images/zanahoria.jpeg",
+    "0707": "Images/canasta.jpeg",
+    "0708": "Images/canasta.jpeg",
+    "0709": "Images/canasta.jpeg",
+    "0710": "Images/zanahoria.jpeg",
+    "0711": "Images/zanahoria.jpeg",
+    "0712": "Images/limon.jpeg",
+    "0713": "Images/limon.jpeg",
+    "0714": "Images/limon.jpeg",
+
+    "0801": "Images/nuez.jpeg",
+    "0802": "Images/nuez.jpeg",
+    "0803": "Images/mandarina.jpeg",
+    "0804": "Images/mandarina.jpeg",
+    "0805": "Images/limon.jpeg",
+    "0806": "Images/papaya.jpeg",
+    "0807": "Images/papaya.jpeg",
+    "0808": "Images/papaya.jpeg",
+    "0809": "Images/papaya.jpeg",
+    "0810": "Images/papaya.jpeg",
+    "0811": "Images/papaya.jpeg",
+    "0812": "Images/papaya.jpeg",
+    "0813": "Images/papaya.jpeg",
+    "0814": "Images/papaya.jpeg",
+
+    "2201": "Images/Palonegro.jpeg",
+    "2202": "Images/amaras.jpeg",
+    "2203": "Images/dolores.jpeg",
+    "2204": "Images/novia.jpeg",
+    "2205": "Images/amaras.jpeg",
+    "2206": "Images/dolores.jpeg",
+    "2207": "Images/novia.jpeg",
+
+    "220820": "Images/amaras.jpeg",
+    "220830": "Images/dolores.jpeg",
+    "220840": "Images/novia.jpeg",
+    "220850": "Images/amaras.jpeg",
+    "220860": "Images/dolores.jpeg",
+    "220870": "Images/novia.jpeg",
+    "2208900301": "Images/amaras.jpeg",
+    "2208900391": "Images/dolores.jpeg",
+    "2208900400": "Images/novia.jpeg",
+    "2208900500": "Images/amaras.jpeg",
+}
+
+def obtener_imagen_por_fraccion(fraccion: str) -> str:
+    codigo = str(fraccion).split()[0].replace("-", "").strip()
+
+    # Busca primero coincidencias largas, luego cortas
+    for largo in [10, 6, 4]:
+        clave = codigo[:largo]
+        if clave in IMAGENES_POR_CODIGO:
+            return IMAGENES_POR_CODIGO[clave]
+
+    return "Images/canasta.jpeg"
+
+
 st.set_page_config(page_title="Motor de Inteligencia Comercial", layout="centered")
 
 st.title("Motor de Inteligencia Comercial")
@@ -46,23 +109,13 @@ if st.button("Consultar") and pregunta:
     with st.spinner("Procesando consulta..."):
         r = responder(pregunta)
 
-    nombre = r.get("consulta_interpretada", "").lower()
-
-    if nombre:
-        letra = nombre[0]
-
-        if letra in ["a", "b", "c"]:
-            st.image("Images/Palonegro.jpeg", width="stretch")
-        elif letra in ["d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]:
-            st.image("Images/canasta.jpeg", width="stretch")
-        else:
-            st.image("Images/nuez.jpeg", width="stretch")
 
     if not r["ok"]:
         st.error(r["mensaje"])
     else:
         st.success("Consulta procesada correctamente. Si desea buscar otro producto, simplemente vuelva al buscador.")
-
+        imagen = obtener_imagen_por_fraccion(r["fraccion_seleccionada"])
+        st.image(imagen, width="stretch")
         st.subheader("🔎 Interpretación")
         st.write(f"**Original:** {r['consulta_original']}")
         st.write(f"**Interpretada:** {r['consulta_interpretada']}")
