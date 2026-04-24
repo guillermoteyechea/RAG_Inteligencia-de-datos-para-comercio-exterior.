@@ -3,8 +3,41 @@ from rag import responder
 
 st.set_page_config(page_title="Motor de Inteligencia Comercial", layout="centered")
 
-st.image("Images/ramo.jpeg", use_container_width=True)
+st.image("Images/ramo.jpeg", width="stretch")
 st.title("Motor de Inteligencia Comercial para evaluar exportaciones de México a España")
+
+with st.expander("ℹ️ ¿Cómo interpretar las métricas?"):
+    st.markdown("""
+    **Norteamérica:** valor exportado del producto hacia la región de Norteamérica, de acuerdo con la base de exportaciones utilizada.
+
+    **España:** valor exportado del producto hacia España.
+
+    **Índice actual:** compara el nivel relativo de penetración del producto en España frente a Norteamérica.  
+    - Si es menor a 1, España muestra menor penetración relativa.  
+    - Si es cercano a 1, ambos mercados presentan niveles similares.  
+    - Si es mayor a 1, España presenta una penetración relativamente alta.
+
+    **Índice oportunidad:** estima el margen potencial de crecimiento.  
+    - Valores positivos sugieren oportunidad de crecimiento.  
+    - Valores cercanos a cero indican poca diferencia relativa.  
+    - Valores negativos sugieren que el producto ya tiene alta penetración en España.
+
+    **Valor potencial:** estimación del tamaño que podría alcanzar el mercado español si tuviera un comportamiento similar al mercado de referencia.
+
+    **Crecimiento estimado:** diferencia entre el valor potencial calculado y el valor actual exportado a España.
+    """)
+
+with st.expander("📚 Fuentes de datos"):
+    st.markdown("""
+    **Exportaciones:** Banco de México. Cubo de comercio exterior: Valor de exportaciones por producto y región.  
+    https://www.banxico.org.mx/CuboComercioExterior/ValorDolares/matrizprodregion
+
+    **Información arancelaria:** Unión Europea. (2013). Reglamento (UE) n.º 952/2013 del Parlamento Europeo y del Consejo, por el que se establece el Código Aduanero de la Unión.  
+    https://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2013:290:0001:0901:ES:PDF
+
+    **Población:** Instituto de Mexicanas y Mexicanos en el Exterior. (2024). Población mexicana en el exterior. Gobierno de México.  
+    https://www.datos.gob.mx/dataset/poblacion_mexicana_exterior
+    """)
 
 pregunta = st.text_input("Escribe un producto:")
 
@@ -18,16 +51,16 @@ if st.button("Consultar") and pregunta:
         letra = nombre[0]
 
         if letra in ["a", "b", "c"]:
-            st.image(str("Images/Palonegro.jpeg"), width="stretch")
+            st.image("Images/Palonegro.jpeg", width="stretch")
         elif letra in ["d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]:
-            st.image(str("Images/canasta.jpeg"), width="stretch")
+            st.image("Images/canasta.jpeg", width="stretch")
         else:
-            st.image(str("Images/nuez.jpeg"), width="stretch")
-    
+            st.image("Images/nuez.jpeg", width="stretch")
+
     if not r["ok"]:
         st.error(r["mensaje"])
     else:
-        st.success("Consulta procesada correctamente, si luego desea buscar otro producto, simplemente vuelva al buscador")
+        st.success("Consulta procesada correctamente. Si desea buscar otro producto, simplemente vuelva al buscador.")
 
         st.subheader("🔎 Interpretación")
         st.write(f"**Original:** {r['consulta_original']}")
@@ -45,9 +78,6 @@ if st.button("Consultar") and pregunta:
         with col2:
             st.metric("España", f"${r['valor_espana']:,.0f}")
 
-        # =========================
-        # 🔥 BLOQUE CORREGIDO
-        # =========================
         st.subheader("📈 Potencial")
 
         m = r["metricas"]
