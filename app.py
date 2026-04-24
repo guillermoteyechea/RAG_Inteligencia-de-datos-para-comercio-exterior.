@@ -76,7 +76,7 @@ with st.expander("ℹ️ ¿Cómo interpretar las métricas?"):
 
     **España:** valor exportado del producto de México hacia España.
 
-    **Índice actual:** compara el nivel relativo de penetración del producto en España frente a Norteamérica.  
+    **Índice actual:** compara el nivel relativo de penetración del producto en España frente a Norteamérica. Tomando como referencia el valor del volumen exportado y la población mexicana en el país.  
     - Si es menor a 1, España muestra menor penetración relativa.  
     - Si es cercano a 1, ambos mercados presentan niveles similares.  
     - Si es mayor a 1, España presenta una penetración relativamente alta.
@@ -124,17 +124,23 @@ if st.button("Consultar") and pregunta:
         st.write(r["fraccion_seleccionada"])
 
         st.subheader("📊 Exportaciones")
+        
+        m = r["metricas"]
         col1, col2 = st.columns(2)
 
         with col1:
-            st.metric("Norteamérica", f"${r['valor_norte_america']:,.0f}")
+           st.metric("Valor exportado a Norteamérica", f"${r['valor_norte_america']:,.0f}")
+           st.metric("Población de referencia Norteamérica", f"{109_300_000:,.0f}")
+           st.metric("Gasto por persona Norteamérica", f"${m['gasto_norte_america']:,.2f}")
 
-        with col2:
-            st.metric("España", f"${r['valor_espana']:,.0f}")
+       with col2:
+          st.metric("Valor exportado a España", f"${r['valor_espana']:,.0f}")
+          st.metric("Población de referencia España", f"{47_500_000:,.0f}")
+          st.metric("Gasto por persona España", f"${m['gasto_espana']:,.2f}")
 
         st.subheader("📈 Potencial")
 
-        m = r["metricas"]
+   
         crecimiento = float(m["crecimiento_estimado"])
 
         st.metric("Índice actual", f"{m['indice_actual']:.2f}")
