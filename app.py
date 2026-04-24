@@ -55,7 +55,6 @@ IMAGENES_POR_CODIGO = {
 def obtener_imagen_por_fraccion(fraccion: str) -> str:
     codigo = str(fraccion).split()[0].replace("-", "").strip()
 
-    # Busca primero coincidencias largas, luego cortas
     for largo in [10, 6, 4]:
         clave = codigo[:largo]
         if clave in IMAGENES_POR_CODIGO:
@@ -70,52 +69,21 @@ st.title("Motor de Inteligencia Comercial")
 st.image("Images/ramo.jpeg", width="stretch")
 st.title("Enfoque para evaluar exportaciones de México a España con Norteamerica como referencia")
 
-with st.expander("ℹ️ ¿Cómo interpretar las métricas?"):
-    st.markdown("""
-    **Norteamérica:** valor exportado del producto de México hacia la región de Norteamérica, de acuerdo con la base de exportaciones utilizada.
-
-    **España:** valor exportado del producto de México hacia España.
-
-    **Índice actual:** compara el nivel relativo de penetración del producto en España frente a Norteamérica. Tomando como referencia el valor del volumen exportado y la población mexicana en el país.  
-    - Si es menor a 1, España muestra menor penetración relativa.  
-    - Si es cercano a 1, ambos mercados presentan niveles similares.  
-    - Si es mayor a 1, España presenta una penetración relativamente alta.
-
-    **Índice oportunidad:** estima el margen potencial de crecimiento.  
-    - Valores positivos sugieren oportunidad de crecimiento.  
-    - Valores cercanos a cero indican poca diferencia relativa.  
-    - Valores negativos sugieren que el producto ya tiene alta penetración en España, incluso mayor que Norteamérica.
-
-    **Valor potencial:** estimación del tamaño que podría alcanzar el mercado español si tuviera un comportamiento similar al mercado de referencia.
-
-    **Crecimiento estimado:** diferencia entre el valor potencial calculado y el valor actual exportado a España.
-    """)
-
-with st.expander("📚 Fuentes de datos"):
-    st.markdown("""
-    **Exportaciones:** Banco de México. Cubo de comercio exterior: Valor de exportaciones por producto y región.  
-    https://www.banxico.org.mx/CuboComercioExterior/ValorDolares/matrizprodregion
-
-    **Información arancelaria:** Unión Europea. (2013). Reglamento (UE) n.º 952/2013 del Parlamento Europeo y del Consejo, por el que se establece el Código Aduanero de la Unión.  
-    https://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2013:290:0001:0901:ES:PDF
-
-    **Población:** Instituto de Mexicanas y Mexicanos en el Exterior. (2024). Población mexicana en el exterior. Gobierno de México.  
-    https://www.datos.gob.mx/dataset/poblacion_mexicana_exterior
-    """)
-
 pregunta = st.text_input("Escribe un producto:")
 
 if st.button("Consultar") and pregunta:
     with st.spinner("Procesando consulta..."):
         r = responder(pregunta)
 
-
     if not r["ok"]:
         st.error(r["mensaje"])
+
     else:
         st.success("Consulta procesada correctamente. Si desea buscar otro producto, simplemente vuelva al buscador.")
+
         imagen = obtener_imagen_por_fraccion(r["fraccion_seleccionada"])
         st.image(imagen, width="stretch")
+
         st.subheader("🔎 Interpretación")
         st.write(f"**Original:** {r['consulta_original']}")
         st.write(f"**Interpretada:** {r['consulta_interpretada']}")
@@ -123,47 +91,55 @@ if st.button("Consultar") and pregunta:
         st.subheader("📦 Fracción seleccionada")
         st.write(r["fraccion_seleccionada"])
 
+        # =========================
+        # 📊 EXPORTACIONES
+        # =========================
         st.subheader("📊 Exportaciones")
-        
+
         m = r["metricas"]
         col1, col2 = st.columns(2)
 
         with col1:
-           st.metric("Valor exportado a Norteamérica", f"${r['valor_norte_america']:,.0f}")
-           st.metric("Población de referencia Norteamérica", f"{10_930_000:,.0f}")
-           st.metric("Gasto por persona Norteamérica", f"${m['gasto_norte_america']:,.2f}")
+            st.metric("Valor exportado a Norteamérica", f"${r['valor_norte_america']:,.0f}")
+            st.metric("Población de referencia Norteamérica", f"{10_930_000:,.0f}")
+            st.metric("Gasto por persona Norteamérica", f"${m['gasto_norte_america']:,.2f}")
 
         with col2:
-           st.metric("Valor exportado a España", f"${r['valor_espana']:,.0f}")
-           st.metric("Población de referencia España", f"{79_581:,.0f}")
-           st.metric("Gasto por persona España", f"${m['gasto_espana']:,.2f}")
+            st.metric("Valor exportado a España", f"${r['valor_espana']:,.0f}")
+            st.metric("Población de referencia España", f"{79_581:,.0f}")
+            st.metric("Gasto por persona España", f"${m['gasto_espana']:,.2f}")
 
-st.subheader("📈 Potencial")
+        # =========================
+        # 📈 POTENCIAL (AQUÍ ESTABA EL ERROR)
+        # =========================
+        st.subheader("📈 Potencial")
 
-crecimiento = float(m["crecimiento_estimado"])
+        crecimiento = float(m["crecimiento_estimado"])
+        col1, col2 = st.columns(2)
 
-col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Índice actual", f"{m['indice_actual']:.2f}")
+            st.metric("Índice oportunidad", f"{m['indice_oportunidad']:.2f}")
 
-with col1:
-    st.metric("Índice actual", f"{m['indice_actual']:.2f}")
-    st.metric("Índice oportunidad", f"{m['indice_oportunidad']:.2f}")
+        with col2:
+            st.metric("Valor potencial", f"${m['valor_potencial']:,.0f}")
 
-with col2:
-    st.metric("Valor potencial", f"${m['valor_potencial']:,.0f}")
-    
-    if abs(crecimiento) < 1e-6:
-        st.metric("Crecimiento estimado", "$0")
-    else:
-        st.metric("Crecimiento estimado", f"${crecimiento:,.0f}")
+            if abs(crecimiento) < 1e-6:
+                st.metric("Crecimiento estimado", "$0")
+            else:
+                st.metric("Crecimiento estimado", f"${crecimiento:,.0f}")
 
-# Mensaje interpretativo (abajo, a lo ancho)
-if abs(crecimiento) < 1e-6:
-    st.info("No contamos con datos suficientes para poder estimar un valor que le pueda ser de utilidad.")
-elif crecimiento < 0:
-    st.info("El producto presenta una penetración relevante en España, por lo que se trata de un mercado ya bien aceptado y con un nivel de madurez considerable.")
-else:
-    st.success("Se observa una oportunidad de crecimiento estimado en el mercado español.")       
+        # Mensaje interpretativo
+        if abs(crecimiento) < 1e-6:
+            st.info("No contamos con datos suficientes para poder estimar un valor que le pueda ser de utilidad.")
+        elif crecimiento < 0:
+            st.info("El producto presenta una penetración relevante en España, por lo que se trata de un mercado ya bien aceptado y con un nivel de madurez considerable.")
+        else:
+            st.success("Se observa una oportunidad de crecimiento estimado en el mercado español.")
 
+        # =========================
+        # 📑 RESULTADOS
+        # =========================
         st.subheader("📑 Resultados encontrados")
 
         for item in r["resultados"]:
