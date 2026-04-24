@@ -130,12 +130,12 @@ if st.button("Consultar") and pregunta:
 
         with col1:
            st.metric("Valor exportado a Norteamérica", f"${r['valor_norte_america']:,.0f}")
-           st.metric("Población de referencia Norteamérica", f"{109_300_000:,.0f}")
+           st.metric("Población de referencia Norteamérica", f"{10_930_000:,.0f}")
            st.metric("Gasto por persona Norteamérica", f"${m['gasto_norte_america']:,.2f}")
 
         with col2:
            st.metric("Valor exportado a España", f"${r['valor_espana']:,.0f}")
-           st.metric("Población de referencia España", f"{47_500_000:,.0f}")
+           st.metric("Población de referencia España", f"{79_581:,.0f}")
            st.metric("Gasto por persona España", f"${m['gasto_espana']:,.2f}")
 
         st.subheader("📈 Potencial")
