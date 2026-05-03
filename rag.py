@@ -80,6 +80,7 @@ tequilita -> tequila
 tekila -> tequila
 manguitos -> mango
 limoncito -> limon
+nuez -> nueces
 
 Consulta: {consulta_usuario}
 """.strip()
