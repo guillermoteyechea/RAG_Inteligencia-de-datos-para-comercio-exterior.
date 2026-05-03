@@ -71,7 +71,7 @@ Tarea:
 - Reduce diminutivos y variantes a su producto base.
 - Conserva el significado.
 - Devuelve SOLO una línea.
-- Devuelve SOLO el nombre del producto principal, que debe ser una fruta, verdura, hortaliza o alguna bebida.
+- Devuelve SOLO el nombre del producto principal, que debe ser una fruta, verdura, hortaliza o en general tambien frutos secos, como nuecee. Tambien considera las bebidas.
 - Sin comillas.
 - Sin explicación.
 
@@ -92,7 +92,7 @@ def es_producto_valido(consulta_usuario: str) -> bool:
     prompt = f"""
 Responde únicamente con SI o NO.
 
-La siguiente consulta se refiere claramente a una fruta, verdura, hortaliza, grano o bebida?
+La siguiente consulta se refiere claramente a una fruta, verdura, hortaliza, grano, fruto seco o bebida?
 
 Consulta: {consulta_usuario}
 """.strip()
@@ -218,43 +218,79 @@ def cargar_o_generar_embeddings(model, textos):
 # =========================
 # Búsqueda semántica
 # =========================
+
 def buscar_con_sbert_tax(consulta, base, model, embeddings, top_k=5, umbral=0.65):
     consulta_limpia = clean_text(consulta)
 
-    textos = [
-        f"{clean_text(base.iloc[i]['fraccion'])} {clean_text(base.iloc[i]['uso'])}"
-        for i in range(len(base))
-    ]
+    # Usa la misma columna con la que generaste embeddings, si existe
+    if "texto_busqueda" in base.columns:
+        textos = base["texto_busqueda"].map(clean_text).tolist()
+    else:
+        textos = [
+            f"{clean_text(base.iloc[i]['uso'])} {clean_text(base.iloc[i]['fraccion'])}"
+            for i in range(len(base))
+        ]
 
-    exact_idx = [i for i, x in enumerate(textos) if x == consulta_limpia]
+    usos = base["uso"].map(clean_text).tolist()
+
+    # 1. Coincidencia exacta contra USO, no contra fraccion + uso
+    exact_idx = [i for i, uso in enumerate(usos) if uso == consulta_limpia]
+
     if exact_idx:
         idx = exact_idx[:top_k]
         resultados = base.iloc[idx].copy()
         resultados["score"] = 1.0
         return resultados
 
+    # 2. Coincidencia por palabra, pero ordenada por prioridad
     palabra_idx = [
-        i for i, x in enumerate(textos)
-        if re.search(rf"\b{re.escape(consulta_limpia)}\b", x)
+        i for i, uso in enumerate(usos)
+        if re.search(rf"\b{re.escape(consulta_limpia)}\b", uso)
     ]
+
     if palabra_idx:
-        idx = palabra_idx[:top_k]
+        def prioridad(i):
+            uso = usos[i]
+
+            if uso == consulta_limpia:
+                return 0
+            if uso.startswith(consulta_limpia + " "):
+                return 1
+            if consulta_limpia in uso:
+                return 2
+            return 3
+
+        idx = sorted(palabra_idx, key=prioridad)[:top_k]
+
         resultados = base.iloc[idx].copy()
-        resultados["score"] = 0.95
+        resultados["score"] = [0.98 - (0.01 * prioridad(i)) for i in idx]
         return resultados
 
+    # 3. Coincidencia aproximada, también ordenada
     aprox_idx = [
-        i for i, x in enumerate(textos)
-        if x.startswith(consulta_limpia)
-        or x.startswith(consulta_limpia + "s")
-        or consulta_limpia in x
+        i for i, uso in enumerate(usos)
+        if uso.startswith(consulta_limpia)
+        or uso.startswith(consulta_limpia + "s")
+        or consulta_limpia in uso
     ]
+
     if aprox_idx:
-        idx = aprox_idx[:top_k]
+        def prioridad_aprox(i):
+            uso = usos[i]
+
+            if uso.startswith(consulta_limpia):
+                return 0
+            if consulta_limpia in uso:
+                return 1
+            return 2
+
+        idx = sorted(aprox_idx, key=prioridad_aprox)[:top_k]
+
         resultados = base.iloc[idx].copy()
-        resultados["score"] = 0.90
+        resultados["score"] = [0.93 - (0.01 * prioridad_aprox(i)) for i in idx]
         return resultados
 
+    # 4. Fallback semántico con SBERT
     consulta_emb = model.encode(
         [consulta_limpia],
         convert_to_numpy=True,
