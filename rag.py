@@ -71,7 +71,7 @@ Tarea:
 - Reduce diminutivos y variantes a su producto base.
 - Conserva el significado.
 - Devuelve SOLO una línea.
-- Devuelve SOLO el nombre del producto principal, que debe ser una fruta, verdura, hortaliza o en general tambien frutos secos, como nuecee. Tambien considera las bebidas.
+- Devuelve SOLO el nombre del producto principal, que debe ser una fruta, verdura, hortaliza o en general tambien frutos secos, como nueces. Tambien considera las bebidas.
 - Sin comillas.
 - Sin explicación.
 
