@@ -87,6 +87,21 @@ if st.button("Consultar") and pregunta:
         st.subheader("🔎 Interpretación")
         st.write(f"**Original:** {r['consulta_original']}")
         st.write(f"**Interpretada:** {r['consulta_interpretada']}")
+        
+        # =========================
+        # 📑 RESULTADOS SOBRE IMPUESTO A CONSIDERAR
+        # =========================
+        st.subheader("📑 Resultados encontrados")
+
+        for item in r["resultados"]:
+            with st.container():
+                st.markdown(f"""
+                **Fracción:** {item['fraccion']}  
+                **Uso:** {item['uso']}  
+                **Impuesto:** {item['impuesto_importacion']}  
+                **Score:** {item['score']:.3f}
+                """)
+                st.divider()
 
         st.subheader("📦 Fracción seleccionada")
         st.write(r["fraccion_seleccionada"])
@@ -137,17 +152,3 @@ if st.button("Consultar") and pregunta:
         else:
             st.success("Se observa una oportunidad de crecimiento estimado en el mercado español.")
 
-        # =========================
-        # 📑 RESULTADOS
-        # =========================
-        st.subheader("📑 Resultados encontrados")
-
-        for item in r["resultados"]:
-            with st.container():
-                st.markdown(f"""
-                **Fracción:** {item['fraccion']}  
-                **Uso:** {item['uso']}  
-                **Impuesto:** {item['impuesto_importacion']}  
-                **Score:** {item['score']:.3f}
-                """)
-                st.divider()
