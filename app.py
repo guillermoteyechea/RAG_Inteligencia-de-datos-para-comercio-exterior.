@@ -91,7 +91,7 @@ if st.button("Consultar") and pregunta:
         # =========================
         # 📑 RESULTADOS SOBRE IMPUESTO A CONSIDERAR
         # =========================
-        st.subheader("📑 Resultados encontrados")
+        st.subheader("📑 Resultados encontrados sobre impuesto a considerar")
 
         for item in r["resultados"]:
             with st.container():
